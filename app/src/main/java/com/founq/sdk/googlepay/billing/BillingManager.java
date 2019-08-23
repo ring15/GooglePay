@@ -159,6 +159,29 @@ public class BillingManager implements PurchasesUpdatedListener {
 
         executeServiceRequest(purchaseFlowRequest);
     }
+    /**
+     * Start a purchase flow
+     */
+    public void initiatePurchaseFlow(final SkuDetails skuDetails) {
+        initiatePurchaseFlow(skuDetails, null);
+    }
+
+    /**
+     * Start a purchase or subscription replace flow
+     */
+    public void initiatePurchaseFlow(final SkuDetails skuDetails, final String oldSkus) {
+        Runnable purchaseFlowRequest = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Launching in-app purchase flow. Replace old SKU? " + (oldSkus != null));
+                BillingFlowParams purchaseParams = BillingFlowParams.newBuilder()
+                        .setSkuDetails(skuDetails).setOldSku(oldSkus).build();
+                mBillingClient.launchBillingFlow(mActivity, purchaseParams);
+            }
+        };
+
+        executeServiceRequest(purchaseFlowRequest);
+    }
 
     public Context getContext() {
         return mActivity;
